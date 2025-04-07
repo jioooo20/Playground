@@ -153,8 +153,8 @@ $bobot = array_column($kribot, 1);
 //SP / SN jadi 1 hitungan
 $sptemp = 0;
 $nptemp = 0;
-for ($i=0; $i < count($fixPDA); $i++) { //20
-    for ($j=0; $j < count($fixPDA[$i]); $j++) { //8
+for ($i = 0; $i < count($fixPDA); $i++) { //20
+    for ($j = 0; $j < count($fixPDA[$i]); $j++) { //8
         $sptemp += ($fixPDA[$i][$j] * $bobot[$j]);
         $nptemp += ($fixNDA[$i][$j] * $bobot[$j]);
     }
@@ -175,13 +175,82 @@ for ($i=0; $i < count($fixPDA); $i++) { //20
 //browser
 echo "<h3>SP dan SN</h3>";
 echo "<table border='1' cellpadding='5' cellspacing='0'>";
-echo "<tr><th>SP</th><th>Value</th><th>SN</th><th>Value</th></tr>";
+echo "<tr><th>SP</th><th>Value</th><th></th><th>SN</th><th>Value</th></tr>";
 for ($i = 0; $i < count($sp); $i++) {
     echo "<tr>";
     echo "<td>SP" . ($i + 1) . "</td>";
     echo "<td>" . number_format($sp[$i], 3) . "</td>";
+    echo "<td></td>";
     echo "<td>SN" . ($i + 1) . "</td>";
     echo "<td>" . number_format($sn[$i], 3) . "</td>";
     echo "</tr>";
+}
+echo "</table>";
+
+//4. Normalisasi SP dan SN
+// NSP = sp / (max (sp))
+// NSN = 1 - (sn / (max (sn)))
+for ($i = 0; $i < count($sp); $i++) {
+    $maxsp = max($sp);
+    $maxsn = max($sn);
+    $nsp[$i] = $sp[$i] / $maxsp;
+    $nsn[$i] = 1 - ($sn[$i] / $maxsn);
+    // echo "<br>SP" . ($i + 1) . " = " . $sp[$i] . " / " . $maxsp . " = " . number_format($nsp[$i], 3); //hitung rapi
+    // echo "<br>SN" . ($i + 1) . " = " . $sn[$i] . " / " . $maxsn . " = " . number_format($nsn[$i], 3);
+}
+//browser 
+echo "<h3> Normalisasi SP dan SN</h3>";
+echo "<table border='1' cellpadding='5' cellspacing='0'>";
+echo "<tr><th>NSP</th><th>Value</th><th></th><th>NSN</th><th>Value</th></tr>";
+for ($i = 0; $i < count($nsp); $i++) {
+    echo "<tr>";
+    echo "<td>SP" . ($i + 1) . "</td>";
+    echo "<td>" . number_format($nsp[$i], 3) . "</td>";
+    echo "<td></td>";
+    echo "<td>SN" . ($i + 1) . "</td>";
+    echo "<td>" . number_format($nsn[$i], 3) . "</td>";
+    echo "</tr>";
+}
+echo "</table>";
+
+//5. Alternatif Skor
+//AS = 1/2 * (NSP + NSN) 
+for ($i = 0; $i < count($nsp); $i++) {
+    $as[$i][0] = "AS" . ($i + 1); //nama alt
+    for ($j = 0; $j < 2; $j++) { // alt sama skor
+        $as[$i][1] = (1 / 2) * ($nsp[$i] + $nsn[$i]);
+    }
+
+    // echo "<br>AS" . ($i + 1) . " = (1/2) * (" . $nsp[$i] . " + " . $nsn[$i] . ") = " . number_format($as[$i], 3);
+}
+//browser
+echo "<h3>Alternatif Skor</h3>";
+echo "<table border='1' cellpadding='5' cellspacing='0'>";
+echo "<tr><th>Alternatif</th><th>AS</th></tr>";
+for ($i = 0; $i < count($as); $i++) {
+    for ($j=0; $j < count($as[$i]); $j++) { 
+        echo "<tr>";
+        echo "<td>" . $as[$i][0] . "</td>";
+        echo "<td>" . number_format($as[$i][1], 3) . "</td>";
+        echo "</tr>";
+    }
+}
+echo "</table>";
+
+//6. Ranking (sort desc)
+usort($as, function ($a, $b) {
+    return $b[1] <=> $a[1];
+});
+$sortAS = $as;
+
+//browser
+echo "<h3>Ranking</h3>";
+echo "<table border='1' cellpadding='5' cellspacing='0'>";
+echo "<tr><th>Alternatif</th><th>AS</th></tr>";
+for ($i = 0; $i < count($as); $i++) {
+        echo "<tr>";
+        echo "<td>" . $sortAS[$i][0] . "</td>";
+        echo "<td>" . number_format($sortAS[$i][1], 3) . "</td>";
+        echo "</tr>";
 }
 echo "</table>";
