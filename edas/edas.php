@@ -116,14 +116,34 @@ for ($i = 0; $i < count($pda); $i++) {
 echo "</table>";
 
 // print NDA dan hilangin minus jadi 0
-for ($i = 0; $i < count($nda); $i++) {
-    // printf("%5s", "No" . ($i + 1) . ":");
-    for ($j = 0; $j <  count($nda[$i]); $j++) {
-        $fixNDA[$i][$j] = $nda[$i][$j] >= 0 ? $nda[$i][$j] : 0;
-        // printf("%7.3f", $fixNDA[$i][$j]);
-    }
-    // print_r("\n");
+// for ($i = 0; $i < count($nda); $i++) {
+//     // printf("%5s", "No" . ($i + 1) . ":");
+//     for ($j = 0; $j <  count($nda[$i]); $j++) {
+//         $fixNDA[$i][$j] = $nda[$i][$j] >= 0 ? $nda[$i][$j] : 0;
+//         // printf("%7.3f", $fixNDA[$i][$j]);
+//     }
+//     // print_r("\n");
+// }
+//browser
+echo "<h3>NDA</h3>";
+echo "<table border='1' cellpadding='5' cellspacing='0'>";
+echo "<tr><th>No</th>";
+for ($j = 0; $j < count($nda[0]); $j++) {
+    echo "<th>Col" . ($j + 1) . "</th>";
 }
+echo "</tr>";
+
+for ($i = 0; $i < count($nda); $i++) {
+    echo "<tr>";
+    echo "<td>No" . ($i + 1) . "</td>";
+    for ($j = 0; $j < count($nda[$i]); $j++) {
+        $fixNDA[$i][$j] = $nda[$i][$j] >= 0 ? $nda[$i][$j] : 0;
+        echo "<td>" . number_format($fixNDA[$i][$j], 3) . "</td>";
+    }
+    echo "</tr>";
+}
+echo "</table>";
+
 
 // print_r(count($fixPDA[0]));
 //3. SP / SN
